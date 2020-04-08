@@ -1,0 +1,13 @@
+[
+    {   
+        "userId": 1,
+        "id": 1,
+        "name": "Só Rezo ",
+        "artist": "Nx Zero",
+        "albumName": "Sete Chaves",
+        "critc": "A melhor música da banda.",
+        "note" : 5,
+        "link": "https://www.youtube.com/watch?v=aT6qNPaPT2Y",
+        "imgLink": "https://www.vagalume.com.br/nxzero/discografia/sete-chaves.jpg"
+      }
+]

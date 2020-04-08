@@ -1,6 +1,8 @@
 import VueRouter from 'vue-router';
 import EmoList from './components/EmoList.vue'
 import AddMusic from './components/AddMusic.vue'
+import Music from './components/Music.vue'
+
  
 export default new VueRouter({
     mode: 'history',
@@ -14,6 +16,11 @@ export default new VueRouter({
             path: '/addMusic',
             name: 'addMusic',
             component: AddMusic
+        },
+        {
+            path: '/music/:id',
+            name: 'music',
+            component: Music
         },
     ]
 });

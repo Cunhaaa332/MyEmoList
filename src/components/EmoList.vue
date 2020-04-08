@@ -1,77 +1,62 @@
 <template>
 <div>
-    <v-app-bar
-      dark
-      color="grey darken-2"
-      class="barra"
-    >
-      <v-img
-        src= http://pngimg.com/uploads/emo/emo_PNG68.png
-        class="logo"
-        max-height= 60
-        max-width= 60
-      ></v-img>
-      <v-toolbar-title>
-        My Emo List
-      </v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn class="ma-2">
-         <span>SETTINGS</span>
-         <v-icon right> settings</v-icon>
-      </v-btn>
-        <v-btn>
-        <span>SIGN IN</span>
-          <v-icon right>exit_to_app</v-icon>
-        </v-btn>
-    </v-app-bar>
 
     <div class="musicBtn">
-      <v-btn to=addMusic dark class="ma-6">
+      <v-btn @click='toggle = !toggle' dark class="ma-6" >
         <span>ADD MUSIC</span>
         <v-icon right>add_box</v-icon>
       </v-btn>
-
-      <v-btn dark>
-        <span>EDIT LIST</span>
-        <v-icon right>create</v-icon>
-      </v-btn>
+    </div>
+    <div v-show='toggle'>
+      <AddMusic/>
     </div>
       <v-row>
         <v-col
-          v-for="(item, i) in items"
-          :key="i"
+          v-for="music in allMusics"
+          :key="music.id"
+          :id="music.id"
           cols="12"
         >
           <v-card
-            :color="item.color"
-            dark
-            max-width="700"
+            max-width="500"
             class="card"
+            
+      
           >
-            <div class="d-flex">
-              <div>
+            <div 
+              :class="verificaNota(music.note)"
+              class="pai"
+              >
+              <div >
                 <v-card-title
                   class="headline font-weight-bold"
-                  v-text="item.title"
-                ></v-card-title>
+                > {{music.name}} </v-card-title>
                 <div class="d-flex">
-                  <v-card-subtitle v-text="item.album"></v-card-subtitle>
-                  <v-card-subtitle v-text="item.artist"></v-card-subtitle>
+                  <v-card-subtitle>Album: {{music.albumName}}</v-card-subtitle>
+                  <v-card-subtitle>Artista: {{music.artist}}</v-card-subtitle>
                 </div>
               </div>
+              <v-spacer></v-spacer>
               <div class="imgENota" >
                 <v-avatar
                   class="ma-3"
                   size="125"
                   tile
                 >
-                  <v-img :src="item.src"></v-img>
+                  <v-img :src="music.imgLink"></v-img>
                 </v-avatar>
                 <div>
-                  <v-card-text class="font-weight-medium" v-text="item.nota"></v-card-text>
+                  <v-card-text class="font-weight-medium">Nota: {{music.note}}</v-card-text>
+                  <v-btn :to="{name:'music',params:{id:music.id}}" dark class="btnVerMais">
+                    VER MAIS
+                  </v-btn> 
                 </div>
+                  <v-icon right @click="deleteMusic(music.id)" class="lixeira">delete</v-icon>     
               </div>
             </div>
+            
+              
+            
           </v-card>
         </v-col>
       </v-row>
@@ -79,34 +64,34 @@
 </template>
 
 <script>
-  export default {
-    name: 'EmoList',
-
-    data: () => ({
-    items: [
-        {
-          color: '#1F7087',
-          src: 'https://upload.wikimedia.org/wikipedia/pt/thumb/d/dc/The_Black_Parade.jpg/220px-The_Black_Parade.jpg',
-          title: 'Welcome to the Black Parade',
-          artist: 'My Chemical Romance',
-          album: 'The Black Parade',
-          critica: 'Um dos hits mais influentes da cena Emo / PopPunk, Welcome to the Black Parade pode ser considerado como "Bohemian Rhapsody" do movimento Emo.',
-          nota: 9.9,
-          link: 'https://www.youtube.com/watch?v=RRKJiM9Njr8'
-        },
-        {
-          color: '#952175',
-          src: 'https://studiosol-a.akamaihd.net/uploadfile/letras/albuns/9/4/b/2/20088.jpg',
-          title: 'Dear Maria, Count Me In',
-          artist: 'All Time Low',
-          album: 'So Wrong, Its Right',
-          critica: 'Um hit sem dúvida influente na cena mais voltada para Scene / Emo, mais animada, e nem um pouco voltada para o lado gótico',
-          nota: 9.2,
-          link: 'https://www.youtube.com/watch?v=RRKJiM9Njr8'
-        },
-      ],
-  }),
-  }
+import AddMusic from "./AddMusic"
+import { mapGetters, mapActions } from "vuex";
+export default {
+  data () {
+   return {
+     toggle: false
+   }
+ },
+  name: "EmoList",methods: {
+    ...mapActions(["fetchMusics","deleteMusic"]),
+    verificaNota(nota){
+        if(nota==5){
+          return "cardInsideNote5"
+        }else if(nota <5 && nota >=3){
+          return "cardInsideNote3e4"
+        }else{
+          return "cardInsideNote2e1"
+        }
+    }
+  },
+  components:{AddMusic},
+  computed: mapGetters(["allMusics"]),
+  created() {
+    this.fetchMusics();
+  } 
+  
+ 
+};
 </script>
 
 <style>
@@ -114,23 +99,54 @@
     display: flex;
     margin: 0 auto;
     
+    
   }
 
-  .barra{
-    margin-bottom: 12px;
+  .cardInsideNote5{
+    background-color: #f0a90a;
+    display: flex;
   }
+
+  .cardInsideNote3e4{
+    background-color: #e3e5e4;
+    display: flex;
+  }
+
+  .cardInsideNote2e1{
+    background-color: #9c5221;
+    display: flex;
+  }
+
+  
   
   .musicBtn{
     text-align: center;
   }
   
-  .logo{
-    width: 70px;
-    height: 70px;    
-  }
+ 
 
   .imgENota{
     display: flex;
-    left: 45px;
+    float: right;
+  }
+
+  .lixeira{
+    bottom: 0;
+    left: 0;
+    height: 40px;
+    position: fixed;
+    width: 100%;
+  }
+
+  .btnVerMais{
+    width: 17%;
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    margin-left: 5px;
+   
+  }
+  .pai{
+    position: relative;
   }
 </style>
